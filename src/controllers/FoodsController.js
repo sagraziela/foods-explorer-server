@@ -6,8 +6,6 @@ class FoodsController {
     async create(request, response) {
         const {title, category, description, price, ingredients } = request.body;
 
-        console.log(ingredients)
-
         const foodNameExists = await knex("foods").where({ title });
 
         if(foodNameExists.length > 0) {
@@ -27,7 +25,6 @@ class FoodsController {
                 food_id
             }
         })
-        console.log(ingredientsInsert)
 
         await knex("ingredients").insert(ingredientsInsert)
 
@@ -61,7 +58,9 @@ class FoodsController {
             price: food.price
         }).where({ id });
 
-        return response.json();
+        const updatedFood = await knex("foods").where({ id });
+
+        return response.json(updatedFood[0]);
     }
 
     async show(request, response) {
@@ -76,7 +75,7 @@ class FoodsController {
         const ingredients = await knex("ingredients").where({ food_id: id });
 
         return response.json({
-            ...food,
+            ...food[0],
             ingredients
         })
     }

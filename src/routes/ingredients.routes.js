@@ -10,7 +10,9 @@ const upload = multer(uploadConfig.MULTER);
 
 ingredientsRoutes.use(ensureAuthentication);
 
+ingredientsRoutes.post("/:food_id", ingredientsController.create);
 ingredientsRoutes.patch("/picture/:id", upload.single("picture"), ingredientsController.update);
-ingredientsRoutes.get("/:id", ingredientsController.index);
+ingredientsRoutes.get("/:food_id", ingredientsController.index);
+ingredientsRoutes.delete("/:id", ingredientsController.delete);
 
 module.exports = ingredientsRoutes;

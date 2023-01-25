@@ -3,8 +3,7 @@ const AppError = require('../utils/AppError');
 
 class FavoritesController {
     async create(request, response) {
-        const { id } = request.params;
-        const { fav_food } = request.body;
+        const { fav_food, user_id } = request.body;
 
         const favExists = await knex("favorites").where({ fav_food }).first();
 
@@ -18,25 +17,17 @@ class FavoritesController {
             throw new AppError("Esse prato não existe no cardápio.");
         }
         
-        await knex("favorites").insert({ fav_food, user_id: id });
+        await knex("favorites").insert({ fav_food, user_id });
 
         return response.json();
     }
 
     async index(request, response) {
-        const { id } = request.params;
+        const { user_id } = request.params;
 
-        const favorites = await knex("favorites").where({ user_id: id });
+        const favorites = await knex("favorites").where({ user_id });
 
-        const listFoods = await knex("foods");
-
-        const favoritesList = favorites.map(favorite => {
-            const filteredFoods = listFoods.filter(food => food.title == favorite.fav_food);
-
-            return filteredFoods[0];
-        });
-
-        return response.json(favoritesList);
+        return response.json(favorites);
     }
 
     async delete (request, response) {

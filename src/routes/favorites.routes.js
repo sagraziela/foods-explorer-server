@@ -7,8 +7,8 @@ const favoritesController = new FavoritesController;
 
 favoritesRoutes.use(ensureAuthentication);
 
-favoritesRoutes.post("/:id", favoritesController.create); //user_id
-favoritesRoutes.get("/:id", favoritesController.index); //user_id
+favoritesRoutes.post("/:user_id", favoritesController.create);
+favoritesRoutes.get("/:user_id", favoritesController.index); 
 favoritesRoutes.delete("/:id", favoritesController.delete); //fav_id
 
 module.exports = favoritesRoutes;

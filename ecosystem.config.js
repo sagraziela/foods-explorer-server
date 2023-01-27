@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name: "app",
+    name: "foods-explorer",
     script: "./src/server.js",
     exec_mode : "cluster",
     env: {

@@ -2,7 +2,7 @@ const knex = require("../database/knex/");
 const AppError = require("../utils/AppError");
 const { hash, compare } = require("bcrypt");
 
-class UsersController {
+class AdminController {
     async create (request, response) {
         const { name, email, password } = request.body;
 
@@ -13,15 +13,16 @@ class UsersController {
         const emailExists = await knex("users").where({ email }).first();
 
         if(emailExists) {
-            throw new AppError("Esse e-mail já está cadastrado em nosso banco de dados. Por favor, informe outro e-mail para continuar o seu cadastro.");
+            throw new AppError("Esse e-mail já está cadastrado no banco de dados. Por favor, informe outro e-mail para continuar o seu cadastro de novo administrador.");
         };
 
         const hashedPassword = await hash(password, 8);
 
-        const user = await knex("users").insert({
+        const userAdmin = await knex("users").insert({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            admin: 1
         })
     
         return response.status(201).json({ name, email, password });
@@ -34,19 +35,10 @@ class UsersController {
             address, 
             phone_number, 
             password, 
-            old_password,
-            admin
+            old_password
         } = request.body;
 
         const user_id = request.user.id;
-
-        if (admin) {
-            const isAnyAdmin = await knex("users").where({ admin: 1});
-
-            if (isAnyAdmin) {
-                throw new AppError("É necessária autorização de um administrador já existente para cadastro de um novo administrador.");
-            }
-        }
       
         const user = await knex("users").where({ id: user_id });
 
@@ -72,7 +64,6 @@ class UsersController {
         user.email = email ?? user.email;
         user.address = address ?? user.address;
         user.phone_number = phone_number ?? user.phone_number;
-        user.admin = admin ?? user.admin;
 
         await knex("users").update({
             name: user.name,
@@ -80,7 +71,6 @@ class UsersController {
             address: user.address,
             phone_number: user.phone_number,
             password: user.password,
-            admin: user.admin
         }).where({ id: user_id })
 
         return response.json();

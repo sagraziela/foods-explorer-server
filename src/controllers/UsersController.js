@@ -37,10 +37,9 @@ class UsersController {
             old_password
         } = request.body;
 
-        const { id } = request.params;
+        const user_id = request.user.id;
       
-        const user = await knex("users").where({ id });
-        console.log(user)
+        const user = await knex("users").where({ id: user_id });
 
         if(!user) {
             throw new AppError("Usuário não encontrado");
@@ -49,7 +48,7 @@ class UsersController {
         if(password && !old_password) {
             throw new AppError("É necessário informar sua senha antiga para salvar uma nova.");
         };
-        console.log(user.password)
+
         if(password && old_password) {
             const passwordMatches = await compare(old_password, user[0].password);
 
@@ -71,7 +70,7 @@ class UsersController {
             address: user.address,
             phone_number: user.phone_number,
             password: user.password
-        }).where({ id })
+        }).where({ id: user_id })
 
         return response.json();
     }

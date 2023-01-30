@@ -5,6 +5,13 @@ class IngredientsController {
     async create(request, response) {
         const { ingredients } = request.body;
         const { food_id } = request.params;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({ id: user_id});
+
+        if (!user || user.admin === 0) {
+            throw new AppError("Usuário não autorizado.");
+        }
 
         const ingredientsInsert = ingredients.map(ingredient => {
             return {
@@ -23,6 +30,13 @@ class IngredientsController {
     async update(request, response) {
         const { id } = request.params;
         const ingredientImg = request.file.filename;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({ id: user_id});
+
+        if (!user || user.admin === 0) {
+            throw new AppError("Usuário não autorizado.");
+        }
 
         const ingredient = await knex("ingredients").where({ id });
 
@@ -49,6 +63,13 @@ class IngredientsController {
 
     async delete(request, response) {
         const { id } = request.params;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({ id: user_id});
+
+        if (!user || user.admin === 0) {
+            throw new AppError("Usuário não autorizado.");
+        };
 
         await knex("ingredients").where({ id }).delete()
 

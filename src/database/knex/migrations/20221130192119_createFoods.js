@@ -5,9 +5,10 @@ exports.up = knex => knex.schema.createTable("foods", table => {
     table.text("description");
     table.real("price");
     table.text("picture").default(null);
-    table.integer("isFav").default(0);
-
+    
+    table.text("created_by");
     table.timestamp("created_at").default(knex.fn.now());
+    table.text("updated_by");
     table.timestamp("updated_at").default(knex.fn.now());
 });
 

@@ -5,6 +5,13 @@ const DiskStorage = require("../providers/diskStorage");
 class FoodsController {
     async create(request, response) {
         const {title, category, description, price, ingredients } = request.body;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({ id: user_id});
+
+        if (!user || user.admin === 0) {
+            throw new AppError("Usuário não autorizado.");
+        }
 
         const foodNameExists = await knex("foods").where({ title });
 
@@ -16,7 +23,8 @@ class FoodsController {
             title,
             category,
             description,
-            price
+            price,
+            created_by: user.name
         })
 
         const ingredientsInsert = ingredients.map(ingredient => {
@@ -39,6 +47,13 @@ class FoodsController {
     async update(request, response) {
         const { title, category, description, price } = request.body;
         const { id } = request.params;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({ id: user_id});
+
+        if (!user || user.admin === 0) {
+            throw new AppError("Usuário não autorizado.");
+        }
 
         const food = await knex("foods").where({ id });
 
@@ -55,7 +70,8 @@ class FoodsController {
             title: food.title,
             category: food.category,
             description: food.description,
-            price: food.price
+            price: food.price,
+            updated_by: user.name
         }).where({ id });
 
         const updatedFood = await knex("foods").where({ id });
@@ -136,6 +152,13 @@ class FoodsController {
 
     async delete(request, response) {
         const { id } = request.params;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({ id: user_id});
+
+        if (!user || user.admin === 0) {
+            throw new AppError("Usuário não autorizado.");
+        }
 
         await knex("foods").where({ id }).delete();
 

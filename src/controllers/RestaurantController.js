@@ -58,6 +58,11 @@ class RestaurantController {
     }
 
     async show(request, response) {
+        const { user_id } = request.user.id;
+
+        if (!user_id) {
+            throw new AppError("Você não tem permissão para acessar as informações solicitadas.");
+        }
 
         const restaurant = await knex("restaurant").first();
 

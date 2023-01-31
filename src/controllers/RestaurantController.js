@@ -60,7 +60,7 @@ class RestaurantController {
     }
 
     async show(request, response) {
-        const { user_id } = request.user.id;
+        const { user_id } = request.params;
 
         if (!user_id) {
             throw new AppError("Você não tem permissão para acessar as informações solicitadas.");

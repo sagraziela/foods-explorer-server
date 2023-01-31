@@ -9,6 +9,6 @@ restaurantRoutes.use(ensureAuthentication);
 
 restaurantRoutes.post("/", restaurantController.create);
 restaurantRoutes.put("/:id", restaurantController.update);
-restaurantRoutes.get("/", restaurantController.show);
+restaurantRoutes.get("/:user_id", restaurantController.show);
 
 module.exports = restaurantRoutes;

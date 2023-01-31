@@ -6,6 +6,8 @@ class RestaurantController {
         const { name, address, phone_number } = request.body;
         const user_id = request.user.id;
 
+        console.log(name, address, phone_number)
+
         if(!name) {
             throw new AppError("O nome é obrigatório");
         };

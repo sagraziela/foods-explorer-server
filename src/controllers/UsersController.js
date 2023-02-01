@@ -17,8 +17,8 @@ class UsersController {
             throw new AppError("Esse e-mail já está cadastrado em nosso banco de dados. Por favor, informe outro e-mail para continuar o seu cadastro.");
         };
 
-        if (!user_id && admin) {
-            const isAnyAdmin = await knex("users").where({ admin: 1});
+        if (admin) {
+            const isAnyAdmin = await knex("users").where({ admin: 1 });
 
             if (isAnyAdmin) {
                 throw new AppError("É necessária autorização de um administrador já existente para cadastro de um novo administrador.");

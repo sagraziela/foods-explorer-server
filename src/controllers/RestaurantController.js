@@ -1,4 +1,4 @@
-const knex = require("../database/knex/");
+const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 
 class RestaurantController {
@@ -12,15 +12,15 @@ class RestaurantController {
             throw new AppError("O nome é obrigatório");
         };
 
-        const nameExists = await knex("users").where({ name }).first();
+        /*const nameExists = await knex("users").where({ name }).first();
 
         if(nameExists) {
             throw new AppError("Esse nome já está cadastrado em nosso banco de dados. Por favor, informe outro nome para continuar o seu cadastro.");
-        };
+        }; */
 
-        const requestingUser = await knex("users").where({ id: user_id })
+        const requestingUser = await knex("users").where({ id: user_id });
 
-        if (user_id && requestingUser.admin !== 1) {
+        if (requestingUser.admin !== 1) {
             throw new AppError("É necessária autorização de um administrador.");
         }
 

@@ -7,6 +7,12 @@ class UsersController {
         const { name, email, password, admin } = request.body;
         const user_id = request.user.id;
 
+        const requestingUser = await knex("users").where({ id: user_id })
+
+        if (admin && requestingUser.admin !== 1) {
+            throw new AppError("É necessária autorização de um administrador já existente para cadastro de um novo administrador.");
+        }
+
         if(!name) {
             throw new AppError("O nome é obrigatório");
         };
@@ -16,20 +22,6 @@ class UsersController {
         if(emailExists) {
             throw new AppError("Esse e-mail já está cadastrado em nosso banco de dados. Por favor, informe outro e-mail para continuar o seu cadastro.");
         };
-
-        if (admin) {
-            const isAnyAdmin = await knex("users").where({ admin: 1 });
-
-            if (isAnyAdmin) {
-                throw new AppError("É necessária autorização de um administrador já existente para cadastro de um novo administrador.");
-            }
-        }
-
-        const requestingUser = await knex("users").where({ id: user_id })
-
-        if (user_id && requestingUser.admin !== 1) {
-            throw new AppError("É necessária autorização de um administrador já existente para cadastro de um novo administrador.");
-        }
 
         const hashedPassword = await hash(password, 8);
 

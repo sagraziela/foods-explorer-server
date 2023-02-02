@@ -4,12 +4,36 @@ const { hash, compare } = require("bcrypt");
 
 class UsersController {
     async create (request, response) {
-        const { name, email, password, admin } = request.body;
+        const { name, email, password } = request.body;
+
+        if(!name) {
+            throw new AppError("O nome é obrigatório");
+        };
+
+        const emailExists = await knex("users").where({ email }).first();
+
+        if(emailExists) {
+            throw new AppError("Esse e-mail já está cadastrado em nosso banco de dados. Por favor, informe outro e-mail para continuar o seu cadastro.");
+        };
+
+        const hashedPassword = await hash(password, 8);
+
+        const user = await knex("users").insert({
+            name,
+            email,
+            password: hashedPassword
+        })
+    
+        return response.status(201).json({ name, email, password });
+    }
+
+    async createAdmin (request, response) {
+        const { name, email, password } = request.body;
         const user_id = request.user.id;
 
-        const requestingUser = await knex("users").where({ id: user_id })
+        const requestingUser = await knex("users").where({ id: user_id }).first();
 
-        if (admin && requestingUser.admin !== 1) {
+        if (requestingUser.admin !== 1) {
             throw new AppError("É necessária autorização de um administrador já existente para cadastro de um novo administrador.");
         }
 
@@ -28,7 +52,8 @@ class UsersController {
         const user = await knex("users").insert({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            admin: 1
         })
     
         return response.status(201).json({ name, email, password });

@@ -6,41 +6,30 @@ class RestaurantController {
         const { name, address, phone_number } = request.body;
         const user_id = request.user.id;
 
-        console.log(name, address, phone_number)
-
         if(!name) {
             throw new AppError("O nome é obrigatório");
         };
 
-        /*const nameExists = await knex("users").where({ name }).first();
-
-        if(nameExists) {
-            throw new AppError("Esse nome já está cadastrado em nosso banco de dados. Por favor, informe outro nome para continuar o seu cadastro.");
-        }; */
-
         const requestingUser = await knex("users").where({ id: user_id });
 
-        if (requestingUser.admin !== 1) {
+        if (requestingUser[0].admin !== 1) {
             throw new AppError("É necessária autorização de um administrador.");
         }
 
-        const id = await knex("restaurant").insert({
+        await knex("restaurant").insert({
             name,
-            address, 
+            address,
             phone_number
-        })
-        console.log(id)
-
-        const restaurant = await knex("restaurant").where({ id })
+        });
     
-        return response.status(201).json(restaurant);
+        return response.status(201).json();
     }
 
     async update (request, response) {
         const { name, address, phone_number } = request.body;
         const { id } = request.params;
 
-        const restaurant = await knex("restaurant").where({ id });
+        const restaurant = await knex("restaurant").where({ id }).first();
 
         if(!restaurant) {
             throw new AppError("Restaurante não encontrado");
@@ -48,7 +37,7 @@ class RestaurantController {
 
         restaurant.name = name ?? restaurant.name;
         restaurant.address = address ?? restaurant.address;
-        user.phone_number = phone_number ?? restaurant.phone_number;
+        restaurant.phone_number = phone_number ?? restaurant.phone_number;
 
         await knex("restaurant").update({
             name: restaurant.name,
@@ -68,11 +57,11 @@ class RestaurantController {
 
         const restaurant = await knex("restaurant").first();
 
-        if(!food) {
-            throw new AppError("Restaurante não encontrado.");
+        if(restaurant === undefined) {
+            return response.json();
         };
 
-        return response.json(restaurant)
+        return response.json(restaurant);
     }
 }
 

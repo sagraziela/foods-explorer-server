@@ -28,6 +28,9 @@ $ npm install
 5. Run the application in development mode:
 $ npm start
 
+<h2>Deployed project</h2>
+https://foods-explorer-server.onrender.com
+
 <h2>Tech Stack (Node.js + JavaScript)</h2>
     - Express
     - SQLite

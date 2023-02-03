@@ -42,7 +42,4 @@ Graziela Antunes
 - LinkedIn: https://www.linkedin.com/in/graziela-antunes-4b544823b/
 - E-mail: graziela.atns@gmail.com
 
-<h2>License</h2>
-This project is under the license MIT.
-
-Made by Graziela Antunes 👋🏽 Get in Touch!
+👋🏽 Get in Touch!
